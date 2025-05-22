@@ -32,6 +32,6 @@ const UserSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 const UserModel = mongoose.model("user", UserSchema);
-// Here we are passing the collection name.
+// Here we are passing the collection name. Mongoose automatically pluralises and lowercases collection name.
 
 module.exports = UserModel;
