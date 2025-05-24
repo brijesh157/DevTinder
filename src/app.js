@@ -10,7 +10,7 @@ app.use(express.json());
 app.post("/user", async (req, res) => {
 
     const data = req.body;
-    const email = data.EmailId;
+    const email = data.emailId;
 
     // Creating a new instance of the User model.
     const user = new User(data);
@@ -34,7 +34,32 @@ app.get("/user", async (req, res) => {
         res.send(users);
     }
     catch (err) {
-        res.status(404).send("Something went wrong");
+        res.status(404).send("Something went wrong " + err.message);
+    }
+})
+
+
+app.delete("/user", async (req, res) => {
+
+    const emailId = req.body.emailId;
+    try {
+        await User.findOneAndDelete({ emailId: emailId });
+        res.send("User deleted successfully");
+    }
+    catch (err) {
+        res.status(400).send("Something went wrong " + err.message);
+    }
+})
+
+app.patch("/user", async (req, res) => {
+    const emailId = req.body.emailId;
+    try {
+        const user = await User.findOneAndUpdate({ emailId: emailId }, { age: 12 }, { runValidators: true });
+
+        res.send(user + " User updated successfully");
+    }
+    catch (err) {
+        res.status(400).send("Someting went wrong " + err);
     }
 })
 

@@ -8,7 +8,7 @@ const UserSchema = new mongoose.Schema({
     lastName: {
         type: String,
     },
-    EmailId: {
+    emailId: {
         type: String,
         required: true,
         unique: true
@@ -25,8 +25,6 @@ const UserSchema = new mongoose.Schema({
     },
     gender: {
         type: String,
-        min: 18,
-        max: 40,
         required: true
     }
 }, { timestamps: true });
