@@ -15,6 +15,8 @@ app.post("/user", async (req, res) => {
     // Creating a new instance of the User model.
     const user = new User(data);
 
+    //TODO Validate SignUp Data
+
     try {
         if (!validator.isEmail(email)) {
             throw new Error("Invalid Email");
@@ -39,27 +41,44 @@ app.get("/user", async (req, res) => {
 })
 
 
-app.delete("/user", async (req, res) => {
-
-    const emailId = req.body.emailId;
-    try {
-        await User.findOneAndDelete({ emailId: emailId });
-        res.send("User deleted successfully");
-    }
-    catch (err) {
-        res.status(400).send("Something went wrong " + err.message);
-    }
-})
-
 app.patch("/user", async (req, res) => {
-    const emailId = req.body.emailId;
+    const data = req.body;
+    const ALLOWED_UPDATES = [
+        "firstName",
+        "emailId",
+        "Age",
+        "Gender"
+    ];
     try {
-        const user = await User.findOneAndUpdate({ emailId: emailId }, { age: 12 }, { runValidators: true });
+        const isUpdateAllowed = Object.keys(data).every((k) => ALLOWED_UPDATES.includes(k));
+        if (!isUpdateAllowed) {
+            throw new Error("Update Not allowed");
+        }
+        //While querying DB, we always pass data in form of js object;
+        const user = await User.findOneAndUpdate({ emailId: data.emailId }, data, { runValidators: true });
 
+        if (!user) { // When user try to update emailId as well
+            throw new Error("User not found");
+        }
         res.send(user + " User updated successfully");
     }
     catch (err) {
         res.status(400).send("Someting went wrong " + err);
+    }
+})
+
+app.delete("/user", async (req, res) => {
+
+    const emailId = req.body.emailId;
+    try {
+        const user = await User.findOneAndDelete({ emailId: emailId });
+        if (!user) {
+            throw new Error("User not found");
+        }
+        res.send(user + " User deleted successfully");
+    }
+    catch (err) {
+        res.status(400).send("Something went wrong " + err.message);
     }
 })
 
