@@ -60,7 +60,7 @@ app.patch("/user", async (req, res) => {
         if (!user) { // When user try to update emailId as well
             throw new Error("User not found");
         }
-        res.send(user + " User updated successfully");
+        res.send(user.firstName + " User updated successfully");
     }
     catch (err) {
         res.status(400).send("Someting went wrong " + err);
