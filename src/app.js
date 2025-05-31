@@ -43,20 +43,7 @@ app.patch("/update", ValidateToken, async (req, res) => {
     }
 })
 
-app.delete("/user", ValidateToken, async (req, res) => {
 
-    const emailId = req.body.emailId;
-    try {
-        const user = await User.findOneAndDelete({ emailId: emailId });
-        if (!user) {
-            throw new Error("User not found");
-        }
-        res.send(user + " User deleted successfully");
-    }
-    catch (err) {
-        res.status(400).send("Something went wrong " + err.message);
-    }
-})
 
 connectDB().
     then(() => {
