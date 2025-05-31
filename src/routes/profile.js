@@ -24,6 +24,7 @@ profileRouter.get("/profile/view", ValidateToken, (req, res) => {
 
 profileRouter.patch("/profile/edit", ValidateToken, async (req, res) => {
     try {
+        //TO DO refactoring here
         const ALLOWED_UPDATES = [
             "firstName",
             "lastName",

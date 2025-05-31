@@ -17,34 +17,6 @@ app.use("/", authRouter);
 app.use("/", profileRouter);
 
 
-app.patch("/update", ValidateToken, async (req, res) => {
-    const data = req.body;
-    const ALLOWED_UPDATES = [
-        "firstName",
-        "emailId",
-        "Age",
-        "Gender"
-    ];
-    try {
-        const isUpdateAllowed = Object.keys(data).every((k) => ALLOWED_UPDATES.includes(k));
-        if (!isUpdateAllowed) {
-            throw new Error("Update Not allowed");
-        }
-        //While querying DB, we always pass data in form of js object;
-        const user = await User.findOneAndUpdate({ emailId: data.emailId }, data, { runValidators: true });
-
-        if (!user) { // When user try to update emailId as well
-            throw new Error("User not found");
-        }
-        res.send(user.firstName + " User updated successfully");
-    }
-    catch (err) {
-        res.status(400).send("Someting went wrong " + err);
-    }
-})
-
-
-
 connectDB().
     then(() => {
         console.log("DB connected successfully");
