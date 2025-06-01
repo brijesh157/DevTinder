@@ -1,6 +1,6 @@
 const express = require("express");
 const profileRouter = express.Router();
-const { ValidateToken } = require("../middlewares/auth");
+const { userAuth } = require("../middlewares/userAuth");
 const User = require("../models/user");
 const bcrypt = require("bcrypt");
 const validator = require("validator");
@@ -16,13 +16,13 @@ const validator = require("validator");
 //     }
 // })
 
-profileRouter.get("/profile/view", ValidateToken, (req, res) => {
+profileRouter.get("/profile/view", userAuth, (req, res) => {
     const user = req.user;
     res.send(user);
 })
 
 
-profileRouter.patch("/profile/edit", ValidateToken, async (req, res) => {
+profileRouter.patch("/profile/edit", userAuth, async (req, res) => {
     try {
         //TO DO refactoring here
         const ALLOWED_UPDATES = [
@@ -62,7 +62,7 @@ profileRouter.patch("/profile/edit", ValidateToken, async (req, res) => {
     }
 })
 
-profileRouter.patch("/profile/edit/password", ValidateToken, async (req, res) => {
+profileRouter.patch("/profile/edit/password", userAuth, async (req, res) => {
     try {
         const loggedInUser = req.user;
         const data = req.body;
@@ -86,7 +86,7 @@ profileRouter.patch("/profile/edit/password", ValidateToken, async (req, res) =>
 
 
 
-profileRouter.delete("/profile/delete", ValidateToken, async (req, res) => {
+profileRouter.delete("/profile/delete", userAuth, async (req, res) => {
     try {
         const user = req.user;
         const data = await User.findByIdAndDelete(user._id);

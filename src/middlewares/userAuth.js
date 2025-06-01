@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/user");
 
-const ValidateToken = async (req, res, next) => {
+const userAuth = async (req, res, next) => {
     const { token } = req.cookies;
     if (!token) {
         return res.status(401).send("Please login first");
@@ -17,4 +17,4 @@ const ValidateToken = async (req, res, next) => {
 }
 
 
-module.exports = { ValidateToken };
+module.exports = { userAuth };
