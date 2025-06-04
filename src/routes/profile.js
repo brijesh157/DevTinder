@@ -21,7 +21,6 @@ profileRouter.get("/profile/view", userAuth, (req, res) => {
     res.send(user);
 })
 
-
 profileRouter.patch("/profile/edit", userAuth, async (req, res) => {
     try {
         //TO DO refactoring here
@@ -82,10 +81,6 @@ profileRouter.patch("/profile/edit/password", userAuth, async (req, res) => {
     }
 })
 
-
-
-
-
 profileRouter.delete("/profile/delete", userAuth, async (req, res) => {
     try {
         const user = req.user;
@@ -99,6 +94,27 @@ profileRouter.delete("/profile/delete", userAuth, async (req, res) => {
     }
     catch (err) {
         res.status(400).send("Something went wrong " + err.message);
+    }
+})
+
+profileRouter.post("/forgetPassword", async (req, res) => {
+    try {
+        const emailId = req.body.emailId;
+        const user = await User.findById({ emailId: emailId });
+        //TO DO Mobile Number based OTP authentication
+        if (!user) {
+            throw new Error("User not found");
+        }
+        const newPassword = req.body.newPassword;
+        if (!validator.isStrongPassword(newPassword)) {
+            throw new Error("Entered password is not strong");
+        }
+        const newHashedPassword = await bcrypt.hash(newPassword, 10);
+        user.password = newHashedPassword;
+        await user.save();
+    }
+    catch (err) {
+        res.status(404).send("Something went wrong " + err.message);
     }
 })
 
