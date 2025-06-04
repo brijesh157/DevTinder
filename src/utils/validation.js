@@ -11,7 +11,7 @@ const validateSignUpData = (data) => {
     if (!validator.isStrongPassword(password)) {
         throw new Error("Password is not strong");
     }
-    if (firstName.length < 3 || firstName.length > 10) {
+    if (firstName.length < 3 || firstName.length > 15) {
         throw new Error("First Name is not valid");
     }
 }

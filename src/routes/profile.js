@@ -100,7 +100,7 @@ profileRouter.delete("/profile/delete", userAuth, async (req, res) => {
 profileRouter.post("/forgetPassword", async (req, res) => {
     try {
         const emailId = req.body.emailId;
-        const user = await User.findById({ emailId: emailId });
+        const user = await User.findOne({ emailId: emailId });
         //TO DO Mobile Number based OTP authentication
         if (!user) {
             throw new Error("User not found");
@@ -112,6 +112,7 @@ profileRouter.post("/forgetPassword", async (req, res) => {
         const newHashedPassword = await bcrypt.hash(newPassword, 10);
         user.password = newHashedPassword;
         await user.save();
+        res.status(200).send("Password changed successfully");
     }
     catch (err) {
         res.status(404).send("Something went wrong " + err.message);
