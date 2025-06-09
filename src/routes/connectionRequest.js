@@ -48,4 +48,42 @@ connectionRequestRouter.post("/request/send/:status/:toUserId", userAuth, async 
     }
 })
 
+connectionRequestRouter.post("/request/review/:status/:requestId", userAuth, async (req, res) => {
+    try {
+        const status = req.params.status;
+        const requestId = req.params.requestId;
+        const loggedInUser = req.user;
+
+        const allowedStatuses = ["accepted", "rejected"];
+        if (!allowedStatuses.includes(status)) {
+            throw new Error("Invalid status given");
+        }
+        const query = {
+            _id: requestId,
+            toUserId: loggedInUser._id,
+            status: "interested"
+        }
+        const existingConnectionRequest = await connectionRequest.findOne(query);
+        if (!existingConnectionRequest) {
+            throw new Error("Connection request not found");
+        }
+        existingConnectionRequest.status = status;
+        await existingConnectionRequest.save();
+        res.status(200).send("Request reviewed successfully");
+    }
+    catch (err) {
+        res.status(400).send("Something went wrong " + err.message);
+    }
+})
+
+connectionRequestRouter.get("/connectionrequests", userAuth, async (req, res) => {
+    try {
+        const connectionRequests = await connectionRequest.find({});
+        res.status(200).send(connectionRequests);
+    }
+    catch (err) {
+        res.status(400).send("Something went wrong " + err.message);
+    }
+})
+
 module.exports = connectionRequestRouter;
