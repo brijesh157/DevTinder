@@ -5,16 +5,16 @@ const User = require("../models/user");
 const bcrypt = require("bcrypt");
 const validator = require("validator");
 
-// profileRouter.get("/profile/view", ValidateToken, async (req, res) => {
-//     try {
-//         const userId = req.query?.userId;
-//         const users = await User.find({ $or: [{ _id: userId }, {}] });
-//         res.send(users);
-//     }
-//     catch (err) {
-//         res.status(400).send("Something went wrong " + err.message);
-//     }
-// })
+profileRouter.get("/users", userAuth, async (req, res) => {
+    try {
+        const userId = req.query?.userId;
+        const users = await User.find({});
+        res.send(users);
+    }
+    catch (err) {
+        res.status(400).send("Something went wrong " + err.message);
+    }
+})
 
 profileRouter.get("/profile/view", userAuth, (req, res) => {
     const user = req.user;
