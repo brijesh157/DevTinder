@@ -20,7 +20,7 @@ userRouter.get("/feed", userAuth, async (req, res) => {
         res.status(200).send(users);
     }
     catch (err) {
-        res.status(200).send("Something went wrong " + err.message);
+        res.status(400).send("Something went wrong " + err.message);
     }
 })
 
