@@ -41,7 +41,7 @@ connectionRequestRouter.post("/request/send/:status/:toUserId", userAuth, async 
         }
         const Connection = new connectionRequest(connectionrequest);
         await Connection.save();
-        res.status(200).send(loggedInUser.firstName + " is interested in " + toUser.firstName);
+        res.status(200).send(loggedInUser.firstName + " is " + status + " in " + toUser.firstName);
     }
     catch (err) {
         res.status(400).send("Something went wrong " + err.message);
