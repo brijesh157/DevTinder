@@ -24,5 +24,29 @@ userRouter.get("/feed", userAuth, async (req, res) => {
     }
 })
 
+userRouter.get("/requests", userAuth, async (req, res) => {
+    try {
+        const loggedInUser = req.user;
+        const data = await ConnectionRequest.find({ toUserId: loggedInUser._id, status: "interested" });
+        res.status(200).send(data);
+    }
+    catch (err) {
+        res.status(400).send("Something went wrong " + err.message);
+    }
+})
+
+userRouter.get("/connections", userAuth, async (req, res) => {
+    try {
+        const loggedInUser = req.user;
+        const query = [{ fromUserId: loggedInUser._id, status: "accepted" },
+        { toUserId: loggedInUser._id, status: "accepted" }]
+        const data = await ConnectionRequest.find({ $or: query });
+        res.status(200).send(data);
+    }
+    catch (err) {
+        res.status(400).send("Something went wrong " + err.message);
+    }
+})
+
 module.exports = userRouter;
 
