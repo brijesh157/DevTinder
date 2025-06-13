@@ -26,11 +26,15 @@ const UserSchema = new mongoose.Schema({
     gender: {
         type: String,
         required: true,
-        validate(data) {
-            if (!["Male", "Female", "Others"].includes(data)) {
-                throw new Error("Gender data is not correct");
-            }
+        enum: {
+            values: ["Male", "Female", "Others"],
+            message: (props) => `${props.value} is not correct gender type`
         }
+        // validate(data) {
+        //     if (!["Male", "Female", "Others"].includes(data)) {
+        //         throw new Error("Gender data is not correct");
+        //     }
+        // }
     }
 }, { timestamps: true });
 
