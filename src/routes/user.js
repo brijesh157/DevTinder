@@ -7,16 +7,22 @@ const { userAuth } = require("../middlewares/userAuth");
 userRouter.get("/feed", userAuth, async (req, res) => {
     try {
         const loggedInUser = req.user;
-        const query1 = { "$or": [{ fromUserId: loggedInUser._id.toString() }, { toUserId: loggedInUser._id.toString() }] };
-        const data = await ConnectionRequest.find(query1);
+        const page = req.query.page || 1;
+        let limit = req.query.limit || 10;
+        limit = limit > 50 ? 50 : limit;
+        const skip = (page - 1) * limit;
+
+        const query = { "$or": [{ fromUserId: loggedInUser._id.toString() }, { toUserId: loggedInUser._id.toString() }] };
+        const data = await ConnectionRequest.find(query);
         const hashSet = new Set();
         data.forEach(connectionrequest => {
             hashSet.add(connectionrequest.toUserId.toString());
             hashSet.add(connectionrequest.fromUserId.toString());
         });
         hashSet.add(loggedInUser._id.toString());
+
         const idsArray = Array.from(hashSet);
-        const users = await User.find({ _id: { $nin: idsArray } });
+        const users = await User.find({ _id: { $nin: idsArray } }).select('firstName lastName').skip(skip).limit(limit);
         res.status(200).send(users);
     }
     catch (err) {
