@@ -24,11 +24,13 @@ userRouter.get("/feed", userAuth, async (req, res) => {
     }
 })
 
-userRouter.get("/requests", userAuth, async (req, res) => {
+userRouter.get("/requests/receieved", userAuth, async (req, res) => {
     try {
         const loggedInUser = req.user;
-        const data = await ConnectionRequest.find({ toUserId: loggedInUser._id, status: "interested" });
-        res.status(200).send(data);
+        const data = await ConnectionRequest.find({ toUserId: loggedInUser._id, status: "interested" })
+            .populate("fromUserId", ["firstName", "lastName"]);
+        const result = data.map(row => row.fromUserId);
+        res.status(200).send(result);
     }
     catch (err) {
         res.status(400).send("Something went wrong " + err.message);
@@ -40,7 +42,20 @@ userRouter.get("/connections", userAuth, async (req, res) => {
         const loggedInUser = req.user;
         const query = [{ fromUserId: loggedInUser._id, status: "accepted" },
         { toUserId: loggedInUser._id, status: "accepted" }]
-        const data = await ConnectionRequest.find({ $or: query });
+        const data = await ConnectionRequest.find({ $or: query })
+            .populate("fromUserId", ["firstName", "lastName"])
+            .populate("toUserId", ["firstName", "lastName"])
+            .select('fromUserId toUserId');
+
+        // const result = data.map((row) => {
+        //     if (row.fromUserId._id.toString() === loggedInUser._id.toString()) {
+        //         return row.toUserId;
+        //     }
+        //     else {
+        //         return row.fromUserId;
+        //     }
+        // });
+
         res.status(200).send(data);
     }
     catch (err) {
