@@ -21,8 +21,8 @@ profileRouter.get("/users", userAuth, async (req, res) => {
 })
 
 profileRouter.get("/profile/view", userAuth, (req, res) => {
-    const user = req.user;
-    res.send(user);
+    const loggedInUser = req.user;
+    res.send(loggedInUser);
 })
 
 profileRouter.patch("/profile/edit", userAuth, async (req, res) => {
@@ -87,8 +87,8 @@ profileRouter.patch("/profile/edit/password", userAuth, async (req, res) => {
 
 profileRouter.delete("/profile/delete", userAuth, async (req, res) => {
     try {
-        const user = req.user;
-        const data = await User.findByIdAndDelete(user._id);
+        const loggedInUser = req.user;
+        const data = await User.findByIdAndDelete(loggedInUser._id);
         res.status(200).json({
             "message": "user deleted successfully",
             "user": {
