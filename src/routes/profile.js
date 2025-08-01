@@ -67,8 +67,8 @@ profileRouter.patch("/profile/edit", userAuth, async (req, res) => {
 
 profileRouter.patch("/profile/edit/password", userAuth, async (req, res) => {
     try {
-        const loggedInUser = req.user;
         const data = req.body;
+        const loggedInUser = req.user;
         const validate = await bcrypt.compare(data.oldPassword, loggedInUser.password);
         if (!validate)
             throw new Error("Old Password is wrong");
