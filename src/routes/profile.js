@@ -8,7 +8,11 @@ const validator = require("validator");
 profileRouter.get("/users", userAuth, async (req, res) => {
     try {
         const userId = req.query?.userId;
-        const users = await User.find({});
+        let query1 = {};
+        if (userId !== undefined) {
+            query1 = { _id: userId };
+        }
+        const users = await User.find(query1);
         res.send(users);
     }
     catch (err) {
