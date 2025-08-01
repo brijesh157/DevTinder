@@ -33,8 +33,8 @@ profileRouter.patch("/profile/edit", userAuth, async (req, res) => {
             "lastName",
             "age"
         ]
-        const data = req.body;
-        const flag = Object.keys(data).every((k) => ALLOWED_UPDATES.includes(k));
+        const inputData = req.body;
+        const flag = Object.keys(inputData).every((k) => ALLOWED_UPDATES.includes(k));
         if (!flag)
             throw new Error("Updation is not allowed");
         const loggedInUser = req.user;
@@ -42,14 +42,14 @@ profileRouter.patch("/profile/edit", userAuth, async (req, res) => {
         //Here, loggedInUser is mongoose document and not a plain object. In that case, 
         // hasOwnProperty() may not behave as expected
 
-        // for (let key in data) {
+        // for (let key in inputData) {
         //     if (key in user) {
-        //         loggedInUser[key] = data[key];
+        //         loggedInUser[key] = inputData[key];
         //     }
         // }
 
-        Object.keys(data).forEach((key) => {
-            loggedInUser[key] = data[key];
+        Object.keys(inputData).forEach((key) => {
+            loggedInUser[key] = inputData[key];
         })
         await loggedInUser.save();
 
@@ -67,15 +67,15 @@ profileRouter.patch("/profile/edit", userAuth, async (req, res) => {
 
 profileRouter.patch("/profile/edit/password", userAuth, async (req, res) => {
     try {
-        const data = req.body;
+        const inputData = req.body;
         const loggedInUser = req.user;
-        const validate = await bcrypt.compare(data.oldPassword, loggedInUser.password);
+        const validate = await bcrypt.compare(inputData.oldPassword, loggedInUser.password);
         if (!validate)
             throw new Error("Old Password is wrong");
-        if (!validator.isStrongPassword(data.newPassword))
+        if (!validator.isStrongPassword(inputData.newPassword))
             throw new Error("New password is not strong");
 
-        const newHashedPassword = await bcrypt.hash(data.newPassword, 10);
+        const newHashedPassword = await bcrypt.hash(inputData.newPassword, 10);
         loggedInUser.password = newHashedPassword;
         loggedInUser.save();
         res.status(200).json({ "message": "password updated successfully" });
@@ -88,11 +88,11 @@ profileRouter.patch("/profile/edit/password", userAuth, async (req, res) => {
 profileRouter.delete("/profile/delete", userAuth, async (req, res) => {
     try {
         const loggedInUser = req.user;
-        const data = await User.findByIdAndDelete(loggedInUser._id);
+        const userAfterDeletion = await User.findByIdAndDelete(loggedInUser._id);
         res.status(200).json({
             "message": "user deleted successfully",
             "user": {
-                userFirstName: data.firstName
+                userFirstName: userAfterDeletion.firstName
             }
         })
     }
@@ -101,6 +101,7 @@ profileRouter.delete("/profile/delete", userAuth, async (req, res) => {
     }
 })
 
+// Why forget password is post and 
 profileRouter.post("/forgetPassword", async (req, res) => {
     try {
         const emailId = req.body.emailId;
