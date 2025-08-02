@@ -101,7 +101,7 @@ profileRouter.delete("/profile/delete", userAuth, async (req, res) => {
     }
 })
 
-// Why forget password is post and 
+// Why forget password is post and updating password is patch.
 profileRouter.post("/forgetPassword", async (req, res) => {
     try {
         const emailId = req.body.emailId;

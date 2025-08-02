@@ -21,9 +21,9 @@ connectionRequestRouter.post("/request/send/:status/:toUserId", userAuth, async 
         const query = {
             $or: [{
                 fromUserId: loggedInUser._id,
-                toUserId: toUserId._id
+                toUserId: toUser._id
             }, {
-                fromUserId: toUserId._id,
+                fromUserId: toUser._id,
                 toUserId: loggedInUser._id
             }]
         };
